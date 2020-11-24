@@ -1,8 +1,7 @@
-function response(ctx, status, data) {
+function response(ctx, status, dados) {
 	ctx.status = status;
 	ctx.body = {
-		status: status >= 200 && status <= 399 ? 'sucesso' : 'erro',
-		data,
+		dados,
 	};
 }
 
