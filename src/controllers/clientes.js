@@ -16,13 +16,21 @@ async function criarCliente(ctx) {
 			'Requisição mal formatada. Todos os campos devem ser informados.'
 		);
 
-	const existeCliente = await clientes.obterClientePorEmail(email);
+	const { usuarioId } = ctx.state;
+	const existeCliente = await clientes.obterClientePorEmail(email, usuarioId);
+
 	if (existeCliente)
 		return response(ctx, 401, {
 			menssagem: 'Já existe cliente cadastrado com esse email',
 		});
 
-	const cliente = await clientes.criarCliente(nome, cpf, email, telefone);
+	const cliente = await clientes.criarCliente(
+		nome,
+		cpf,
+		email,
+		telefone,
+		usuarioId
+	);
 	return response(ctx, 201, { id: cliente.id });
 }
 

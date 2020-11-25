@@ -7,12 +7,13 @@ const Autenticar = require('./controllers/auth');
 
 // Middleware
 const Password = require('./middlewares/encrypt');
+const Session = require('./middlewares/session');
 
 const router = new Router();
 
 router.post('/auth', Autenticar);
 
 router.post('/usuarios', Password.encrypt, Usuarios.criarUsuario);
-router.post('/clientes', Clientes.criarCliente);
+router.post('/clientes', Session.verify, Clientes.criarCliente);
 
 module.exports = router;

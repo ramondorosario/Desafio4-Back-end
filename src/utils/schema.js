@@ -49,7 +49,7 @@ async function up(numero = 0) {
 		console.log('Tabela criada');
 	}
 }
-up();
+// up();
 
 /** Deleta a tabela escolhida */
 async function dropTable(nomeDaTabela) {
