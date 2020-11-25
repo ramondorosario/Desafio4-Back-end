@@ -11,7 +11,7 @@ server.use(bodyParser());
 server.use(router.routes());
 
 server.use((ctx) => {
-	response(ctx, 405, { message: 'Método inválido.' });
+	response(ctx, 405, { menssagem: 'Método inválido.' });
 });
 
 require('dotenv').config();
