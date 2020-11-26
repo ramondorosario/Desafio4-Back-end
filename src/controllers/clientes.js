@@ -54,4 +54,31 @@ async function editarCliente(ctx) {
 	});
 }
 
-module.exports = { criarCliente, editarCliente };
+async function obterClientesPorPagina(ctx) {
+	const { usuarioId } = ctx.state;
+	const { clientesPorPagina = 0, offset = 0 } = ctx.request.query;
+
+	if (!clientesPorPagina || !offset)
+		return response(ctx, 400, {
+			menssagem:
+				'Requisição mal formatada. Página e limite por pagina deve ser informada',
+		});
+
+	const paginaAtual = Number(offset) / 10 + 1;
+
+	const totalDePaginas = 10;
+
+	const resultado = await clientes.obterClientesPorPagina(
+		usuarioId,
+		Number(offset),
+		Number(clientesPorPagina)
+	);
+
+	return response(ctx, 200, {
+		paginaAtual,
+		totalDePaginas,
+		clientes: resultado,
+	});
+}
+
+module.exports = { criarCliente, editarCliente, obterClientesPorPagina };

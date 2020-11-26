@@ -42,10 +42,20 @@ async function editarCliente(id, nome, cpf, email) {
 	return resultado.rows.shift();
 }
 
+async function obterClientesPorPagina(usuarioId, offset, clientesPorPagina) {
+	const query = {
+		text: `SELECT * FROM clientes WHERE usuario_id = $1 OFFSET $2 LIMIT $3`,
+		values: [usuarioId, offset, clientesPorPagina],
+	};
+
+	const resultado = await db.query(query);
+	return resultado.rows;
+}
+
 module.exports = {
 	criarCliente,
 	obterClientePorId,
 	obterClientePorEmail,
 	editarCliente,
+	obterClientesPorPagina,
 };
-// Verificar se editarCliente está funcionando
