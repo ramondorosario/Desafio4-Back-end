@@ -1,3 +1,4 @@
+/* eslint-disable no-else-return */
 /* eslint-disable prettier/prettier */
 const { response } = require('../utils/response');
 const clientes = require('../repositories/clientes');
@@ -54,31 +55,55 @@ async function editarCliente(ctx) {
 	});
 }
 
-async function obterClientesPorPagina(ctx) {
+async function listarClientes(ctx) {
 	const { usuarioId } = ctx.state;
-	const { clientesPorPagina = 0, offset = 0 } = ctx.request.query;
+	const {
+		clientesPorPagina = 10,
+		offset = 0,
+		busca = null,
+	} = ctx.request.query;
+	console.log(busca);
+	let resultado;
 
-	if (!clientesPorPagina || !offset)
-		return response(ctx, 400, {
-			menssagem:
-				'Requisição mal formatada. Página e limite por pagina deve ser informada',
+	if (!busca) {
+		resultado = await clientes.obterClientes(
+			usuarioId,
+			offset,
+			clientesPorPagina
+		);
+	} else {
+		resultado = await clientes.obterClientesPorBusca(
+			usuarioId,
+			offset,
+			clientesPorPagina,
+			busca
+		);
+	}
+
+	if (!resultado.length)
+		return response(ctx, 404, {
+			menssagem: 'Não foram encontrados clientes cadastrados',
 		});
 
-	const paginaAtual = Number(offset) / 10 + 1;
-
-	const totalDePaginas = 10;
-
-	const resultado = await clientes.obterClientesPorPagina(
-		usuarioId,
-		Number(offset),
-		Number(clientesPorPagina)
-	);
+	const dadosCliente = resultado.map((cliente) => {
+		return {
+			nome: cliente.nome,
+			email: cliente.email,
+			cobrancasFeitas: 0,
+			cobrancasRecebidas: 0,
+			estaInadimplente: false,
+		};
+	});
 
 	return response(ctx, 200, {
-		paginaAtual,
-		totalDePaginas,
-		clientes: resultado,
+		paginaAtual: Number(offset) / 10 + 1,
+		totalDePaginas: 10,
+		clientes: dadosCliente,
 	});
 }
 
-module.exports = { criarCliente, editarCliente, obterClientesPorPagina };
+module.exports = {
+	criarCliente,
+	editarCliente,
+	listarClientes,
+};
