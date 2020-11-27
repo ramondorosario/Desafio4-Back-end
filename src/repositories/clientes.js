@@ -42,10 +42,30 @@ async function editarCliente(id, nome, cpf, email) {
 	return resultado.rows.shift();
 }
 
-async function obterClientesPorPagina(usuarioId, offset, clientesPorPagina) {
+async function obterClientes(usuarioId, offset, clientesPorPagina) {
 	const query = {
-		text: `SELECT * FROM clientes WHERE usuario_id = $1 OFFSET $2 LIMIT $3`,
+		text: `SELECT * FROM clientes WHERE usuario_id = $1 OFFSET $2::int LIMIT $3::int`,
 		values: [usuarioId, offset, clientesPorPagina],
+	};
+
+	const resultado = await db.query(query);
+	return resultado.rows;
+}
+
+async function obterClientesPorBusca(
+	usuarioId,
+	offset,
+	clientesPorPagina,
+	busca
+) {
+	const query = {
+		text: `
+		select * from clientes 
+		where usuario_id = $1
+		and ( nome like $2 or email like $2 or cpf like $2)
+		offset $3 limit $4;
+		`,
+		values: [usuarioId, `%${busca}%`, offset, clientesPorPagina],
 	};
 
 	const resultado = await db.query(query);
@@ -57,5 +77,6 @@ module.exports = {
 	obterClientePorId,
 	obterClientePorEmail,
 	editarCliente,
-	obterClientesPorPagina,
+	obterClientes,
+	obterClientesPorBusca,
 };
