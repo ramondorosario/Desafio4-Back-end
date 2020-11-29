@@ -56,4 +56,30 @@ async function listarCobrancas(usuarioId, offset, clientesPorPagina) {
 	return resultado.rows;
 }
 
-module.exports = { cadastrarCobranca, totalDeRegistros, listarCobrancas };
+async function registrosDeCobrancaComEmail(usuarioId) {
+	const query = {
+		text: `
+		select tabela.*, clientes.email 
+		from clientes
+		inner join (
+			select * from cobrancas
+			where cliente_id in (
+				select id from clientes
+				where usuario_id = $1
+			)
+		) as tabela
+		on clientes.id = tabela.cliente_id;
+		`,
+		values: [usuarioId],
+	};
+
+	const resultado = await db.query(query);
+	return resultado.rows;
+}
+
+module.exports = {
+	cadastrarCobranca,
+	totalDeRegistros,
+	listarCobrancas,
+	registrosDeCobrancaComEmail,
+};

@@ -14,7 +14,12 @@ async function gerarCobranca(ctx, cliente, valor, vencimento) {
 				name: cliente.nome,
 				email: cliente.email,
 				type: 'individual',
-				documents: [{ type: 'cpf', number: cliente.cpf }],
+				documents: [
+					{
+						type: 'cpf',
+						number: '323.835.190-73' /* Mudar cpf fixo para cliente.cpf */,
+					},
+				], // Foi gerado cpf valido para não ocorrer erro quando for utilizar numeros qualquer como cpf (isso fei feito para facilitar os testes)
 			},
 			api_key: process.env.API_KEY,
 		});

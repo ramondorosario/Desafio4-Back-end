@@ -2,6 +2,7 @@
 /* eslint-disable prettier/prettier */
 const { response } = require('../utils/response');
 const clientes = require('../repositories/clientes');
+const cobrancas = require('../repositories/cobrancas');
 
 async function criarCliente(ctx) {
 	const {
@@ -90,13 +91,37 @@ async function listarClientes(ctx) {
 			menssagem: 'Não foram encontrados clientes cadastrados',
 		});
 
+	const registroDeCobrancas = await cobrancas.registrosDeCobrancaComEmail(
+		usuarioId
+	);
+
 	const dadosCliente = resultado.map((cliente) => {
+		let cobrancasFeitas = 0;
+		let cobrancasRecebidas = 0;
+		let estaInadimplente = false;
+
+		const cobrancasIndividual = registroDeCobrancas.filter(
+			(item) => item.email === cliente.email
+		);
+
+		cobrancasIndividual.forEach((cobranca) => {
+			cobrancasFeitas += cobranca.valor;
+			if (cobranca.data_do_pagamento) {
+				cobrancasRecebidas += cobranca.valor;
+			} else if (
+				!cobranca.data_do_pagamento &&
+				+cobranca.vencimento < +new Date()
+			) {
+				estaInadimplente = true;
+			}
+		});
+
 		return {
 			nome: cliente.nome,
 			email: cliente.email,
-			cobrancasFeitas: 0,
-			cobrancasRecebidas: 0,
-			estaInadimplente: false,
+			cobrancasFeitas,
+			cobrancasRecebidas,
+			estaInadimplente,
 		};
 	});
 

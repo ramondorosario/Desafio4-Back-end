@@ -76,9 +76,9 @@ async function listarCobrancas(ctx) {
 		let status = '';
 		const { data_do_pagamento, codigo_de_barra, ...dadosCobranca } = x;
 
-		if (!data_do_pagamento && +x.dataVencimento + new Date()) {
+		if (!data_do_pagamento && +x.vencimento > +new Date()) {
 			status = 'AGUARDANDO';
-		} else if (+new Date() < +x.dataVencimento) {
+		} else if (data_do_pagamento) {
 			status = 'PAGO';
 		} else {
 			status = 'VENCIDO';
