@@ -3,7 +3,7 @@ const Router = require('koa-router');
 // Controller
 const Usuarios = require('./controllers/usuarios');
 const Clientes = require('./controllers/clientes');
-const Cobnrancas = require('./controllers/cobrancas');
+const Cobrancas = require('./controllers/cobrancas');
 const Autenticar = require('./controllers/auth');
 
 // Middleware
@@ -18,6 +18,6 @@ router.post('/usuarios', Password.encrypt, Usuarios.criarUsuario);
 router.post('/clientes', Session.verify, Clientes.criarCliente);
 router.put('/clientes', Session.verify, Clientes.editarCliente);
 router.get('/clientes', Session.verify, Clientes.listarClientes);
-router.post('/cobrancas', Session.verify, Cobnrancas.criarCobranca);
-
+router.post('/cobrancas', Session.verify, Cobrancas.criarCobranca);
+router.get('/cobrancas', Session.verify, Cobrancas.listarCobrancas);
 module.exports = router;

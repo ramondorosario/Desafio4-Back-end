@@ -42,6 +42,16 @@ async function editarCliente(id, nome, cpf, email) {
 	return resultado.rows.shift();
 }
 
+async function totalRegistroClientes(usuarioId) {
+	const query = {
+		text: `SELECT * FROM clientes WHERE usuario_id = $1`,
+		values: [usuarioId],
+	};
+
+	const resultado = await db.query(query);
+	return resultado.rows;
+}
+
 async function obterClientes(usuarioId, offset, clientesPorPagina) {
 	const query = {
 		text: `SELECT * FROM clientes WHERE usuario_id = $1 OFFSET $2::int LIMIT $3::int`,
@@ -72,11 +82,27 @@ async function obterClientesPorBusca(
 	return resultado.rows;
 }
 
+async function totalRegistroClientesPorBusca(usuarioId, busca) {
+	const query = {
+		text: `
+		select * from clientes 
+		where usuario_id = $1
+		and ( nome like $2 or email like $2 or cpf like $2);
+		`,
+		values: [usuarioId, `%${busca}%`],
+	};
+
+	const resultado = await db.query(query);
+	return resultado.rows;
+}
+
 module.exports = {
 	criarCliente,
 	obterClientePorId,
 	obterClientePorEmail,
 	editarCliente,
 	obterClientes,
+	totalRegistroClientes,
 	obterClientesPorBusca,
+	totalRegistroClientesPorBusca,
 };

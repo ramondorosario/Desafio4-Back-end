@@ -24,4 +24,36 @@ async function cadastrarCobranca(
 	return resultado.rows.shift();
 }
 
-module.exports = { cadastrarCobranca };
+async function totalDeRegistros(usuarioId) {
+	const query = {
+		text: `
+		select * from cobrancas
+		where cliente_id in (
+			select id from clientes
+			where usuario_id = $1
+		)
+		`,
+		values: [usuarioId],
+	};
+
+	const resultado = await db.query(query);
+	return resultado.rows;
+}
+
+async function listarCobrancas(usuarioId, offset, clientesPorPagina) {
+	const query = {
+		text: `
+			select * from cobrancas
+			where cliente_id in (
+				select id from clientes
+				where usuario_id = $1
+			)
+			offset $2 limit $3;`,
+		values: [usuarioId, offset, clientesPorPagina],
+	};
+
+	const resultado = await db.query(query);
+	return resultado.rows;
+}
+
+module.exports = { cadastrarCobranca, totalDeRegistros, listarCobrancas };

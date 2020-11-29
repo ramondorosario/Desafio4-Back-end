@@ -64,6 +64,7 @@ async function listarClientes(ctx) {
 	} = ctx.request.query;
 
 	let resultado;
+	let totalDeRegistros;
 
 	if (!busca) {
 		resultado = await clientes.obterClientes(
@@ -71,6 +72,7 @@ async function listarClientes(ctx) {
 			offset,
 			clientesPorPagina
 		);
+		totalDeRegistros = (await clientes.totalRegistroClientes(usuarioId)).length;
 	} else {
 		resultado = await clientes.obterClientesPorBusca(
 			usuarioId,
@@ -78,6 +80,9 @@ async function listarClientes(ctx) {
 			clientesPorPagina,
 			busca
 		);
+		totalDeRegistros = (
+			await clientes.totalRegistroClientesPorBusca(usuarioId, busca)
+		).length;
 	}
 
 	if (!resultado.length)
@@ -97,7 +102,7 @@ async function listarClientes(ctx) {
 
 	return response(ctx, 200, {
 		paginaAtual: Number(offset) / 10 + 1,
-		totalDePaginas: 10,
+		totalDePaginas: Math.ceil(totalDeRegistros / clientesPorPagina),
 		clientes: dadosCliente,
 	});
 }

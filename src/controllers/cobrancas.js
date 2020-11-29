@@ -1,3 +1,5 @@
+/* eslint-disable prettier/prettier */
+/* eslint-disable camelcase */
 const { response } = require('../utils/response');
 const clientes = require('../repositories/clientes');
 const cobrancas = require('../repositories/cobrancas');
@@ -55,4 +57,52 @@ async function criarCobranca(ctx) {
 	});
 }
 
-module.exports = { criarCobranca };
+async function listarCobrancas(ctx) {
+	const { usuarioId } = ctx.state;
+	const { cobrancasPorPagina = 10, offset = 0 } = ctx.query;
+
+	const resultado = await cobrancas.listarCobrancas(
+		usuarioId,
+		Number(offset),
+		cobrancasPorPagina
+	);
+
+	if (!resultado)
+		return response(ctx, 404, {
+			menssagem: 'Não existem cobranças cadastradas',
+		});
+
+	const listaDeCobrancas = resultado.map((x) => {
+		let status = '';
+		const { data_do_pagamento, codigo_de_barra, ...dadosCobranca } = x;
+
+		if (!data_do_pagamento && +x.dataVencimento + new Date()) {
+			status = 'AGUARDANDO';
+		} else if (+new Date() < +x.dataVencimento) {
+			status = 'PAGO';
+		} else {
+			status = 'VENCIDO';
+		}
+		return { ...dadosCobranca, status };
+	});
+
+	const totalDeRegistros = (await cobrancas.totalDeRegistros(usuarioId)).length;
+
+	return response(ctx, 200, {
+		paginaAtual: Number(offset) / 10 + 1,
+		totalDePaginas: Math.ceil(totalDeRegistros / cobrancasPorPagina),
+		cobrancas: listaDeCobrancas.map((x) => {
+			return {
+				id: x.id,
+				idDoCliente: x.cliente_id,
+				descricao: x.descricao,
+				valor: x.valor,
+				vencimento: x.vencimento,
+				linkDoBoleto: x.link_do_boleto,
+				status: x.status,
+			};
+		}),
+	});
+}
+
+module.exports = { criarCobranca, listarCobrancas };
