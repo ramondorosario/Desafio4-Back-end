@@ -62,7 +62,7 @@ async function listarClientes(ctx) {
 		offset = 0,
 		busca = null,
 	} = ctx.request.query;
-	console.log(busca);
+
 	let resultado;
 
 	if (!busca) {

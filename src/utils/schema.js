@@ -28,7 +28,8 @@ const schema = [
 			link_do_boleto TEXT NOT NULL,
 			descricao TEXT NOT NULL,
 			vencimento DATE NOT NULL,
-			data_do_pagamento DATE NOT NULL,
+			data_do_pagamento DATE,
+			codigo_de_barra TEXT NOT NULL,
 			cliente_id INT NOT NULL
 		)`,
 	},
