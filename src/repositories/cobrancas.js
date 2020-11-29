@@ -77,9 +77,28 @@ async function registrosDeCobrancaComEmail(usuarioId) {
 	return resultado.rows;
 }
 
+async function pagarCobranca(usuarioId, idCobranca) {
+	const query = {
+		text: `
+		update cobrancas
+		set data_do_pagamento = $1
+		where cliente_id in (
+			select id from clientes 
+			where usuario_id = $2
+		)
+		and id = $3
+		RETURNING *`,
+		values: [new Date(), usuarioId, idCobranca],
+	};
+
+	const resultado = await db.query(query);
+	return resultado.rows.shift();
+}
+
 module.exports = {
 	cadastrarCobranca,
 	totalDeRegistros,
 	listarCobrancas,
 	registrosDeCobrancaComEmail,
+	pagarCobranca,
 };

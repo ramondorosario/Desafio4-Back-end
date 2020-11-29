@@ -105,4 +105,21 @@ async function listarCobrancas(ctx) {
 	});
 }
 
-module.exports = { criarCobranca, listarCobrancas };
+async function pagarCobranca(ctx) {
+	const { usuarioId } = ctx.state;
+	const { idDaCobranca } = ctx.request.body;
+
+	if (!idDaCobranca)
+		return response(ctx, 400, {
+			menssagem: 'Requisição mal formatada. Id da cobrança deve ser informada',
+		});
+
+	const resultado = await cobrancas.pagarCobranca(usuarioId, idDaCobranca);
+
+	if (!resultado)
+		return response(ctx, 401, { menssagem: 'A cobrança não existe' });
+
+	return response(ctx, 200, { menssagem: 'Cobrança paga com sucesso' });
+}
+
+module.exports = { criarCobranca, listarCobrancas, pagarCobranca };
