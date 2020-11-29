@@ -5,6 +5,7 @@ const Usuarios = require('./controllers/usuarios');
 const Clientes = require('./controllers/clientes');
 const Cobrancas = require('./controllers/cobrancas');
 const Autenticar = require('./controllers/auth');
+const Relatorios = require('./controllers/relatorios');
 
 // Middleware
 const Password = require('./middlewares/encrypt');
@@ -21,5 +22,6 @@ router.get('/clientes', Session.verify, Clientes.listarClientes);
 router.post('/cobrancas', Session.verify, Cobrancas.criarCobranca);
 router.get('/cobrancas', Session.verify, Cobrancas.listarCobrancas);
 router.put('/cobrancas', Session.verify, Cobrancas.pagarCobranca);
+router.get('/relatorios', Session.verify, Relatorios.obterRelatorio);
 
 module.exports = router;

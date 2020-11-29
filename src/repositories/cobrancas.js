@@ -24,7 +24,7 @@ async function cadastrarCobranca(
 	return resultado.rows.shift();
 }
 
-async function totalDeRegistros(usuarioId) {
+async function todasAsCobrancas(usuarioId) {
 	const query = {
 		text: `
 		select * from cobrancas
@@ -97,7 +97,7 @@ async function pagarCobranca(usuarioId, idCobranca) {
 
 module.exports = {
 	cadastrarCobranca,
-	totalDeRegistros,
+	todasAsCobrancas,
 	listarCobrancas,
 	registrosDeCobrancaComEmail,
 	pagarCobranca,

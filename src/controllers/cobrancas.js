@@ -86,7 +86,7 @@ async function listarCobrancas(ctx) {
 		return { ...dadosCobranca, status };
 	});
 
-	const totalDeRegistros = (await cobrancas.totalDeRegistros(usuarioId)).length;
+	const totalDeRegistros = (await cobrancas.todasAsCobrancas(usuarioId)).length;
 
 	return response(ctx, 200, {
 		paginaAtual: Number(offset) / 10 + 1,
