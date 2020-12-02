@@ -43,12 +43,18 @@ async function todasAsCobrancas(usuarioId) {
 async function listarCobrancas(usuarioId, offset, clientesPorPagina) {
 	const query = {
 		text: `
+		select tabela1.*, tabela2.nome from (
 			select * from cobrancas
 			where cliente_id in (
 				select id from clientes
 				where usuario_id = $1
 			)
-			offset $2 limit $3;`,
+		) as tabela1
+		inner join (
+			select id, nome from clientes
+		) as tabela2
+		on tabela1.cliente_id = tabela2.id
+		offset $2 limit $3`,
 		values: [usuarioId, offset, clientesPorPagina],
 	};
 

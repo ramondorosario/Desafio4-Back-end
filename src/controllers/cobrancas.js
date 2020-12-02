@@ -95,6 +95,7 @@ async function listarCobrancas(ctx) {
 			return {
 				id: x.id,
 				idDoCliente: x.cliente_id,
+				nomeDoCliente: x.nome,
 				descricao: x.descricao,
 				valor: x.valor,
 				vencimento: x.vencimento,
