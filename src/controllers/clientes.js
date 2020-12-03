@@ -119,6 +119,7 @@ async function listarClientes(ctx) {
 		return {
 			nome: cliente.nome,
 			email: cliente.email,
+			tel: cliente.telefone,
 			cobrancasFeitas,
 			cobrancasRecebidas,
 			estaInadimplente,
