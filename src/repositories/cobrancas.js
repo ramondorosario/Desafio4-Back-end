@@ -62,6 +62,34 @@ async function listarCobrancas(usuarioId, offset, clientesPorPagina) {
 	return resultado.rows;
 }
 
+async function listarCobrancasPorBusca(
+	usuarioId,
+	offset,
+	clientesPorPagina,
+	busca
+) {
+	const query = {
+		text: `
+		select tabela1.*, tabela2.nome  from (
+			select * from cobrancas
+			where cliente_id in (
+				select id from clientes
+				where usuario_id = $1
+			)
+		) as tabela1
+		inner join (
+			select * from clientes
+			where (nome like $2 or email like $2 or cpf like $2)
+		) as tabela2
+		on tabela1.cliente_id = tabela2.id
+		offset $3 limit $4`,
+		values: [usuarioId, `%${busca}%`, offset, clientesPorPagina],
+	};
+
+	const resultado = await db.query(query);
+	return resultado.rows;
+}
+
 async function registrosDeCobrancaComEmail(usuarioId) {
 	const query = {
 		text: `
@@ -105,6 +133,7 @@ module.exports = {
 	cadastrarCobranca,
 	todasAsCobrancas,
 	listarCobrancas,
+	listarCobrancasPorBusca,
 	registrosDeCobrancaComEmail,
 	pagarCobranca,
 };

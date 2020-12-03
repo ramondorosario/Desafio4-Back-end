@@ -59,13 +59,23 @@ async function criarCobranca(ctx) {
 
 async function listarCobrancas(ctx) {
 	const { usuarioId } = ctx.state;
-	const { cobrancasPorPagina = 10, offset = 0 } = ctx.query;
+	const { cobrancasPorPagina = 10, offset = 0, busca = null } = ctx.query;
 
-	const resultado = await cobrancas.listarCobrancas(
-		usuarioId,
-		Number(offset),
-		cobrancasPorPagina
-	);
+	let resultado;
+	if (busca) {
+		resultado = await cobrancas.listarCobrancasPorBusca(
+			usuarioId,
+			Number(offset),
+			cobrancasPorPagina,
+			busca
+		);
+	} else {
+		resultado = await cobrancas.listarCobrancas(
+			usuarioId,
+			Number(offset),
+			cobrancasPorPagina
+		);
+	}
 
 	if (!resultado)
 		return response(ctx, 404, {
