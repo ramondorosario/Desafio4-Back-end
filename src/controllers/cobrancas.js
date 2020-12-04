@@ -77,7 +77,7 @@ async function listarCobrancas(ctx) {
 		);
 	}
 
-	if (!resultado)
+	if (!resultado.length)
 		return response(ctx, 404, {
 			menssagem: 'Não existem cobranças cadastradas',
 		});
