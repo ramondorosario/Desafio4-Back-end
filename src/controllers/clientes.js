@@ -117,6 +117,7 @@ async function listarClientes(ctx) {
 		});
 
 		return {
+			id: cliente.id,
 			nome: cliente.nome,
 			email: cliente.email,
 			tel: cliente.telefone,
